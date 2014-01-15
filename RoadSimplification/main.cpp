@@ -40,6 +40,7 @@ int main(int argc, char *argv[]) {
 		ThinningUtil::thinningGuoHall(result);
 	} else {
 		result = cv::imread(argv[1], 0);
+		result.convertTo(result, CV_8UC1);
 
 		// Thinning
 		ThinningUtil::thinningGuoHall(result);
