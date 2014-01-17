@@ -927,17 +927,17 @@ void GraphUtil::realize(RoadGraph& roads) {
 /**
  * Make the edge finer by inserting more points along the polyline.
  */
-std::vector<QVector2D> GraphUtil::finerEdge(RoadGraph* roads, RoadEdgeDesc e, float step) {
+std::vector<QVector2D> GraphUtil::finerEdge(RoadGraph& roads, RoadEdgeDesc e, float step) {
 	std::vector<QVector2D> polyLine;
 
-	for (int i = 0; i < roads->graph[e]->polyLine.size() - 1; i++) {
-		QVector2D vec = roads->graph[e]->polyLine[i + 1] - roads->graph[e]->polyLine[i];
+	for (int i = 0; i < roads.graph[e]->polyLine.size() - 1; i++) {
+		QVector2D vec = roads.graph[e]->polyLine[i + 1] - roads.graph[e]->polyLine[i];
 		float length = vec.length();
 		for (int j = 0; j < length; j += step) {
-			polyLine.push_back(roads->graph[e]->polyLine[i] + vec * (float)j / length);
+			polyLine.push_back(roads.graph[e]->polyLine[i] + vec * (float)j / length);
 		}
 	}
-	polyLine.push_back(roads->graph[e]->polyLine[roads->graph[e]->polyLine.size() - 1]);
+	polyLine.push_back(roads.graph[e]->polyLine[roads.graph[e]->polyLine.size() - 1]);
 
 	return polyLine;
 }
@@ -1528,7 +1528,7 @@ void GraphUtil::extractRoads2(RoadGraph& roads, const AbstractArea& area, int ro
 		RoadVertexDesc tgt = boost::target(edges[e_id], roads.graph);
 
 		// if either vertice is out of the range, add a vertex on the border
-		std::vector<QVector2D> polyLine = finerEdge(&roads, edges[e_id]);
+		std::vector<QVector2D> polyLine = finerEdge(roads, edges[e_id]);
 		QVector2D intPt;
 		if (area.contains(polyLine[0])) {
 			for (int i = 1; i < polyLine.size(); i++) {
@@ -1619,7 +1619,7 @@ void GraphUtil::subtractRoads2(RoadGraph& roads, const AbstractArea& area) {
 		RoadVertexDesc tgt = boost::target(edges[e_id], roads.graph);
 
 		// if either vertice is out of the range, add a vertex on the border
-		std::vector<QVector2D> polyLine = finerEdge(&roads, edges[e_id], 3.0f);
+		std::vector<QVector2D> polyLine = finerEdge(roads, edges[e_id], 3.0f);
 		QVector2D intPt;
 		if (area.contains(polyLine[0])) {
 			for (int i = 1; i < polyLine.size(); i++) {
@@ -4382,18 +4382,18 @@ void GraphUtil::printStatistics(RoadGraph* roads) {
 /**
  * 道路網をcv::Mat行列に置き換える
  */
-void GraphUtil::convertToMat(RoadGraph& roads, cv::Mat_<uchar>& mat, const cv::Size& size, const QVector2D& offset) {
+void GraphUtil::convertToMat(RoadGraph& roads, cv::Mat_<uchar>& mat, const cv::Size& size, bool flip) {
 	mat = cv::Mat_<uchar>(size, 0);
 
 	RoadEdgeIter ei, eend;
 	for (boost::tie(ei, eend) = boost::edges(roads.graph); ei != eend; ++ei) {
 		for (int i = 0; i < roads.graph[*ei]->polyLine.size() - 1; i++) {
-			QVector2D p0 = roads.graph[*ei]->polyLine[i] + offset;
-			QVector2D p1 = roads.graph[*ei]->polyLine[i + 1] + offset;
+			QVector2D p0 = roads.graph[*ei]->polyLine[i];
+			QVector2D p1 = roads.graph[*ei]->polyLine[i + 1];
 			cv::line(mat, cv::Point(p0.x(), p0.y()), cv::Point(p1.x(), p1.y()), cv::Scalar(255), 3, CV_AA);
 		}
 	}
 
 	// 上下を反転
-	cv::flip(mat, mat, 0);
+	if (flip) cv::flip(mat, mat, 0);
 }

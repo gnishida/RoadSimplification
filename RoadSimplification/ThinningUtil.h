@@ -10,6 +10,7 @@
 
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
+#include "RoadGraph.h"
 
 class ThinningUtil {
 protected:
@@ -25,6 +26,8 @@ public:
 	static void thinning(const cv::Mat& src, cv::Mat& dst);
 	static void thinningGuoHall(const cv::Mat& src, cv::Mat& dst);
 	static void thinningGen(const cv::Mat& src, cv::Mat& dst);
-	static void findIntersection(const cv::Mat& src, cv::Mat& dst);
+	static void findIntersection(const cv::Mat& src, RoadGraph& roads);
+	static void simplifyRoad(const cv::Mat& img, RoadGraph& srcRoad, RoadGraph& dstRoad);
+	static bool findNearestCell(const cv::Mat& mat, int r, int c, int max_dist, int& nearestRow, int& nearestCol);
 };
 
