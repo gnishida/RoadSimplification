@@ -1868,7 +1868,7 @@ bool GraphUtil::reduce(RoadGraph& roads, RoadVertexDesc desc) {
 	//if (edges[0]->lanes != edges[1]->lanes) return false;
 
 	// If the vertices form a triangle, don't remove it.
-	if (hasEdge(roads, vd[0], vd[1])) return false;
+	//if (hasEdge(roads, vd[0], vd[1])) return false;
 
 	RoadEdgePtr new_edge = RoadEdgePtr(new RoadEdge(edges[0]->type, edges[0]->lanes, edges[0]->oneWay));
 	orderPolyLine(roads, ed[0], vd[0]);

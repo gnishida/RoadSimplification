@@ -282,25 +282,26 @@ void ThinningUtil::simplifyRoad(const cv::Mat& img, RoadGraph& srcRoad, RoadGrap
 
 		if (new_v1 == new_v2) continue;
 
-		//if (!GraphUtil::hasEdge(dstRoad, new_v1, new_v2)) {
-			// エッジを追加
-			RoadEdgeDesc e = GraphUtil::addEdge(dstRoad, new_v1, new_v2, srcRoad.graph[*ei]);
-			GraphUtil::moveEdge(dstRoad, e, dstRoad.graph[new_v1]->pt, dstRoad.graph[new_v2]->pt);
+		// エッジを追加
+		RoadEdgeDesc e = GraphUtil::addEdge(dstRoad, new_v1, new_v2, srcRoad.graph[*ei]);
+		GraphUtil::moveEdge(dstRoad, e, dstRoad.graph[new_v1]->pt, dstRoad.graph[new_v2]->pt);
 
-			// 追加したエッジが、白色の線の上をだいたい通っていることを確認する
-			int onCount = 0;
-			int totalCount = 0;
-			int r, c;
-			std::vector<QVector2D> line = GraphUtil::finerEdge(dstRoad, e, 10.0f);
-			for (int i = 0; i < line.size(); i++, totalCount++) {
-				if (findNearestCell(dstRoadMat, line[i].y(), line[i].x(), 5, r, c)) onCount++;
-			}
-			if (onCount > (float)totalCount * 0.5f) dstRoad.graph[e]->valid = false;
+		// 追加したエッジが、白色の線の上をだいたい通っていることを確認する
+		int onCount = 0;
+		int totalCount = 0;
+		int r, c;
+		std::vector<QVector2D> line = GraphUtil::finerEdge(dstRoad, e, 10.0f);
+		for (int i = 0; i < line.size(); i++, totalCount++) {
+			if (findNearestCell(dstRoadMat, line[i].y(), line[i].x(), 5, r, c)) onCount++;
+		}
+		if (onCount > (float)totalCount * 0.5f) dstRoad.graph[e]->valid = false;
 
-			// 追加したエッジを、画像に反映する
-			GraphUtil::drawRoadSegmentOnMat(dstRoad, e, dstRoadMat);
-		//}
+		// 追加したエッジを、画像に反映する
+		GraphUtil::drawRoadSegmentOnMat(dstRoad, e, dstRoadMat);
 	}
+
+	GraphUtil::reduce(dstRoad);
+	GraphUtil::clean(dstRoad);
 }
 
 bool ThinningUtil::findNearestCell(const cv::Mat& mat, int r, int c, int max_dist, int& nearestRow, int& nearestCol) {
