@@ -280,9 +280,11 @@ void ThinningUtil::simplifyRoad(const cv::Mat& img, RoadGraph& srcRoad, RoadGrap
 			conv[v2] = new_v2;
 		}
 
+		if (new_v1 == new_v2) continue;
+
 		//if (!GraphUtil::hasEdge(dstRoad, new_v1, new_v2)) {
 			// エッジを追加
-			RoadEdgeDesc e = GraphUtil::addEdge(&dstRoad, new_v1, new_v2, srcRoad.graph[*ei]);
+			RoadEdgeDesc e = GraphUtil::addEdge(dstRoad, new_v1, new_v2, srcRoad.graph[*ei]);
 			GraphUtil::moveEdge(dstRoad, e, dstRoad.graph[new_v1]->pt, dstRoad.graph[new_v2]->pt);
 
 			// 追加したエッジが、白色の線の上をだいたい通っていることを確認する
