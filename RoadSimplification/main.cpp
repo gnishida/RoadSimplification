@@ -27,6 +27,10 @@ int main(int argc, char *argv[]) {
 		// AvenueとLocal streetsのみを読み込む
 		RoadGraph r;
 		GraphUtil::loadRoads(r, argv[1], roadType);
+
+		GraphUtil::simplify2(r, 30.0f);
+
+		/*
 		GraphUtil::translate(r, QVector2D(500, 500));
 
 		// Create a matrix from the road object
@@ -34,7 +38,7 @@ int main(int argc, char *argv[]) {
 		GraphUtil::convertToMat(r, mat, cv::Size(1000, 1000), false);
 
 		// Dilation
-		cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(21, 21));//, cv::Point(10, 10));
+		cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(15, 15));//, cv::Point(10, 10));
 		cv::dilate(mat, result, kernel);
 
 		// Thinning
@@ -44,6 +48,7 @@ int main(int argc, char *argv[]) {
 		cv::Mat result2;
 		RoadGraph r2;
 		ThinningUtil::simplifyRoad(result, r, r2);
+		*/
 
 		GraphUtil::saveRoads(r2, "result.gsm");
 

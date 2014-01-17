@@ -1953,6 +1953,27 @@ void GraphUtil::simplify(RoadGraph& roads, float dist_threshold) {
 }
 
 /**
+ * ノード間の距離が指定した距離よりも近い場合は、１つにしてしまう。
+ * ノードとエッジ間の距離が、閾値よりも小さい場合も、エッジ上にノードを移してしまう。
+ */
+void GraphUtil::simplify2(RoadGraph& roads, float dist_threshold) {
+	RoadGraph temp;
+	copyRoads(roads, temp);
+
+	roads.clear();
+
+	// 全ての頂点同士で、近いものをグループ化する
+
+	// グループ化できなかった頂点について、近くにエッジがあれば、エッジ上に頂点を追加して、グループ化する
+
+	// グループ化した頂点を、roadsに登録する
+
+	// エッジを追加する
+
+	roads.setModified();
+}
+
+/**
  * エッジのポリゴンが3つ以上で構成されている場合、中間点を全てノードとして登録する。
  */
 void GraphUtil::normalize(RoadGraph& roads) {
