@@ -242,8 +242,8 @@ void ThinningUtil::simplifyRoad(const cv::Mat& img, RoadGraph& srcRoad, RoadGrap
 	// まず、交差点候補を抽出する
 	findIntersection(img, dstRoad);
 
-	// 簡素化した道路網の画像
-	cv::Mat dstRoadMat(img.size(), CV_8U);
+	// dstRoadの画像
+	cv::Mat dstRoadMat = cv::Mat::zeros(img.size(), CV_8U);
 
 	QHash<RoadVertexDesc, RoadVertexDesc> conv;	// srcRoadの頂点 ⇒ dstRoadの頂点への変換テーブル
 
