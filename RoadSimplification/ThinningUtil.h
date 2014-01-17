@@ -17,9 +17,14 @@ protected:
 	~ThinningUtil() {}
 
 private:
+	static void thinningIteration(cv::Mat& im, int iter);
 	static void thinningGuoHallIteration(cv::Mat& im, int iter);
+	static void thinningGenIteration(cv::Mat& im, int iter);
 
 public:
-	static void thinningGuoHall(cv::Mat& im);
+	static void thinning(const cv::Mat& src, cv::Mat& dst);
+	static void thinningGuoHall(const cv::Mat& src, cv::Mat& dst);
+	static void thinningGen(const cv::Mat& src, cv::Mat& dst);
+	static void findIntersection(const cv::Mat& src, cv::Mat& dst);
 };
 

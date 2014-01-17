@@ -37,18 +37,27 @@ int main(int argc, char *argv[]) {
 		cv::dilate(mat, result, kernel);
 
 		// Thinning
-		ThinningUtil::thinningGuoHall(result);
+		//ThinningUtil::thinning(result, result);
+		ThinningUtil::thinningGuoHall(result, result);
+		//ThinningUtil::thinningGen(result, result);
 	} else {
 		result = cv::imread(argv[1], 0);
 		result.convertTo(result, CV_8UC1);
 
 		// Thinning
-		ThinningUtil::thinningGuoHall(result);
+		//ThinningUtil::thinning(result, result);
+		ThinningUtil::thinningGuoHall(result, result);
+		//ThinningUtil::thinningGen(result, result);
 	}
+
+	cv::Mat result2;
+	ThinningUtil::findIntersection(result, result2);
+
+	cv::imwrite("result.bmp", result2);
 
 	// Display
 	cv::namedWindow("result", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-	cv::imshow("result", result);
+	cv::imshow("result", result2);
 
 	cv::waitKey(0);
 }
