@@ -176,5 +176,6 @@ public:
 
 	// OpenCV
 	static void convertToMat(RoadGraph& roads, cv::Mat_<uchar>& mat, const cv::Size& size, bool flip = true);
+	static void drawRoadSegmentOnMat(RoadGraph& roads, RoadEdgeDesc e, cv::Mat& mat, int width = 3, int brightness = 255);
 };
 

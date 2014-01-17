@@ -564,23 +564,28 @@ void GraphUtil::orderPolyLine(RoadGraph* roads, RoadEdgeDesc e, RoadVertexDesc s
 
 /**
  * Move the edge to the specified location.
+ * src_posは、エッジeのsource頂点の移動先
+ * tgt_posは、エッジeのtarget頂点の移動先
  */
 void GraphUtil::moveEdge(RoadGraph& roads, RoadEdgeDesc e, QVector2D& src_pos, QVector2D& tgt_pos) {
 	RoadVertexDesc src = boost::source(e, roads.graph);
 	RoadVertexDesc tgt = boost::target(e, roads.graph);
 
-	QVector2D src_diff = src_pos - roads.graph[src]->pt;
-	QVector2D tgt_diff = tgt_pos - roads.graph[tgt]->pt;
+	int n = roads.graph[e]->polyLine.size();
 
 	if ((roads.graph[e]->polyLine[0] - roads.graph[src]->pt).lengthSquared() < (roads.graph[e]->polyLine[0] - roads.graph[tgt]->pt).lengthSquared()) {
-		int n = roads.graph[e]->polyLine.size();
+		QVector2D src_diff = src_pos - roads.graph[e]->polyLine[0];
+		QVector2D tgt_diff = tgt_pos - roads.graph[e]->polyLine[n - 1];
+
 		for (int i = 1; i < n - 1; i++) {
 			roads.graph[e]->polyLine[i] += src_diff + (tgt_diff - src_diff) * (float)i / (float)(n - 1);
 		}
 		roads.graph[e]->polyLine[0] = src_pos;
 		roads.graph[e]->polyLine[n - 1] = tgt_pos;
 	} else {
-		int n = roads.graph[e]->polyLine.size();
+		QVector2D src_diff = src_pos - roads.graph[e]->polyLine[n - 1];
+		QVector2D tgt_diff = tgt_pos - roads.graph[e]->polyLine[0];
+
 		for (int i = 1; i < n - 1; i++) {
 			roads.graph[e]->polyLine[i] += tgt_diff + (src_diff - tgt_diff) * (float)i / (float)(n - 1);
 		}
@@ -4387,13 +4392,21 @@ void GraphUtil::convertToMat(RoadGraph& roads, cv::Mat_<uchar>& mat, const cv::S
 
 	RoadEdgeIter ei, eend;
 	for (boost::tie(ei, eend) = boost::edges(roads.graph); ei != eend; ++ei) {
-		for (int i = 0; i < roads.graph[*ei]->polyLine.size() - 1; i++) {
-			QVector2D p0 = roads.graph[*ei]->polyLine[i];
-			QVector2D p1 = roads.graph[*ei]->polyLine[i + 1];
-			cv::line(mat, cv::Point(p0.x(), p0.y()), cv::Point(p1.x(), p1.y()), cv::Scalar(255), 3, CV_AA);
-		}
+		drawRoadSegmentOnMat(roads, *ei, mat);
 	}
 
 	// 上下を反転
 	if (flip) cv::flip(mat, mat, 0);
+}
+
+/**
+ * 道路のエッジを、cv::Mat行列上に描画する
+ * brightnessは、0から255で指定。（デフォルト値は255）
+ */
+void GraphUtil::drawRoadSegmentOnMat(RoadGraph& roads, RoadEdgeDesc e, cv::Mat& mat, int width, int brightness) {
+	for (int i = 0; i < roads.graph[e]->polyLine.size() - 1; i++) {
+		QVector2D p0 = roads.graph[e]->polyLine[i];
+		QVector2D p1 = roads.graph[e]->polyLine[i + 1];
+		cv::line(mat, cv::Point(p0.x(), p0.y()), cv::Point(p1.x(), p1.y()), cv::Scalar(brightness), width, CV_AA);
+	}
 }
