@@ -4362,6 +4362,8 @@ void GraphUtil::convertToMat(RoadGraph& roads, cv::Mat_<uchar>& mat, const cv::S
 
 	RoadEdgeIter ei, eend;
 	for (boost::tie(ei, eend) = boost::edges(roads.graph); ei != eend; ++ei) {
+		if (!roads.graph[*ei]->valid) continue;
+		
 		drawRoadSegmentOnMat(roads, *ei, mat);
 	}
 
